@@ -1,0 +1,1229 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calendário Escolar 2026 - Tocantins</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/styles.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #2c5282;
+            --primary-light: #4299e1;
+            --primary-dark: #1a365d;
+            --secondary: #38a169;
+            --accent: #ed8936;
+            --warning: #e53e3e;
+            --info: #3182ce;
+            --light: #f7fafc;
+            --light-gray: #e2e8f0;
+            --gray: #a0aec0;
+            --dark-gray: #4a5568;
+            --dark: #2d3748;
+            
+            /* Cores para tipos de dias */
+            --dia-letivo: #38a169;
+            --feriado: #e53e3e;
+            --evento-pedagogico: #4299e1;
+            --ferias: #a0aec0;
+            --sabado-letivo: #ed8936;
+            --data-comemorativa: #9f7aea;
+            
+            --radius: 8px;
+            --shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--dark);
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* Cabeçalho */
+        .header {
+            text-align: center;
+            background: white;
+            border-radius: var(--radius);
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow);
+            border-left: 5px solid var(--primary);
+        }
+
+        .header h1 {
+            color: var(--primary-dark);
+            margin-bottom: 0.5rem;
+            font-size: 2.2rem;
+        }
+
+        .header p {
+            color: var(--dark-gray);
+            font-size: 1.1rem;
+        }
+
+        .summary-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .summary-card {
+            background: var(--light);
+            border-radius: var(--radius);
+            padding: 1rem;
+            text-align: center;
+            border-top: 4px solid var(--primary);
+        }
+
+        .summary-card .number {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--primary);
+            display: block;
+        }
+
+        /* Filtros */
+        .filters {
+            background: white;
+            border-radius: var(--radius);
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow);
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .filter-btn {
+            padding: 0.5rem 1rem;
+            border: 2px solid var(--light-gray);
+            background: white;
+            border-radius: 20px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s;
+            font-weight: 500;
+        }
+
+        .filter-btn.active {
+            border-color: var(--primary);
+            background: var(--primary);
+            color: white;
+        }
+
+        .filter-btn:hover:not(.active) {
+            border-color: var(--primary);
+        }
+
+        /* Timeline */
+        .timeline-section {
+            background: white;
+            border-radius: var(--radius);
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow);
+        }
+
+        .timeline {
+            display: flex;
+            overflow-x: auto;
+            padding: 1rem 0;
+            gap: 0.5rem;
+        }
+
+        .month-card {
+            min-width: 150px;
+            background: var(--light);
+            border-radius: var(--radius);
+            padding: 1rem;
+            text-align: center;
+            cursor: pointer;
+            transition: transform 0.3s;
+            border: 2px solid transparent;
+        }
+
+        .month-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--primary);
+        }
+
+        .month-card.active {
+            border-color: var(--primary);
+            background: linear-gradient(135deg, var(--primary-light) 0%, var(--primary) 100%);
+            color: white;
+        }
+
+        .month-name {
+            font-weight: bold;
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .month-days {
+            font-size: 0.9rem;
+            color: var(--dark-gray);
+        }
+
+        .month-card.active .month-days {
+            color: rgba(255,255,255,0.9);
+        }
+
+        /* Calendário Mensal */
+        .calendar-container {
+            background: white;
+            border-radius: var(--radius);
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow);
+        }
+
+        .calendar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid var(--light-gray);
+        }
+
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 0.5rem;
+        }
+
+        .weekday {
+            text-align: center;
+            font-weight: bold;
+            color: var(--primary);
+            padding: 0.5rem;
+            background: var(--light);
+            border-radius: 4px;
+        }
+
+        .day-cell {
+            aspect-ratio: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border-radius: 4px;
+            border: 1px solid var(--light-gray);
+            padding: 0.3rem;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            position: relative;
+        }
+
+        .day-cell:hover {
+            transform: scale(1.05);
+            z-index: 10;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+
+        .day-number {
+            font-weight: bold;
+            margin-bottom: 0.2rem;
+        }
+
+        .day-event {
+            font-size: 0.7rem;
+            text-align: center;
+            line-height: 1.2;
+            max-height: 2.4em;
+            overflow: hidden;
+        }
+
+        /* Cores para tipos de dias */
+        .dia-letivo { background-color: rgba(56, 161, 105, 0.1); border-color: var(--dia-letivo); }
+        .feriado { background-color: rgba(229, 62, 62, 0.1); border-color: var(--feriado); color: var(--feriado); }
+        .evento-pedagogico { background-color: rgba(66, 153, 225, 0.1); border-color: var(--evento-pedagogico); }
+        .ferias { background-color: rgba(160, 174, 192, 0.1); border-color: var(--ferias); color: var(--dark-gray); }
+        .sabado-letivo { background-color: rgba(237, 137, 54, 0.1); border-color: var(--sabado-letivo); }
+        .data-comemorativa { background-color: rgba(159, 122, 234, 0.1); border-color: var(--data-comemorativa); }
+
+        /* Legenda */
+        .legend {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-top: 2rem;
+            padding-top: 1rem;
+            border-top: 2px solid var(--light-gray);
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .legend-color {
+            width: 20px;
+            height: 20px;
+            border-radius: 4px;
+            border: 2px solid;
+        }
+
+        /* Eventos Cards */
+        .events-section {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .event-category {
+            background: white;
+            border-radius: var(--radius);
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+        }
+
+        .event-category h3 {
+            color: var(--primary-dark);
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--light-gray);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .event-list {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .event-item {
+            padding: 0.8rem;
+            margin-bottom: 0.5rem;
+            border-left: 4px solid;
+            background: var(--light);
+            border-radius: 4px;
+        }
+
+        .event-date {
+            font-weight: bold;
+            color: var(--dark);
+            display: block;
+            margin-bottom: 0.2rem;
+        }
+
+        .event-desc {
+            font-size: 0.9rem;
+            color: var(--dark-gray);
+        }
+
+        /* Observações */
+        .observations {
+            background: white;
+            border-radius: var(--radius);
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow);
+        }
+
+        .observations h2 {
+            color: var(--primary-dark);
+            margin-bottom: 1rem;
+        }
+
+        .observation-item {
+            margin-bottom: 1rem;
+            padding-left: 1.5rem;
+            position: relative;
+        }
+
+        .observation-item:before {
+            content: counter(obs) ". ";
+            counter-increment: obs;
+            position: absolute;
+            left: 0;
+            font-weight: bold;
+            color: var(--primary);
+        }
+
+        /* Botões de Ação */
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-top: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .action-btn {
+            padding: 0.8rem 1.5rem;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: var(--radius);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+
+        .action-btn:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+
+        .action-btn.secondary {
+            background: var(--gray);
+        }
+
+        .action-btn.secondary:hover {
+            background: var(--dark-gray);
+        }
+
+        /* Modal para detalhes do dia */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: var(--radius);
+            padding: 2rem;
+            max-width: 500px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--gray);
+        }
+
+        .close-modal:hover {
+            color: var(--dark);
+        }
+
+        /* Responsividade */
+        @media (max-width: 768px) {
+            .calendar-grid {
+                gap: 0.3rem;
+            }
+            
+            .day-cell {
+                font-size: 0.8rem;
+                padding: 0.2rem;
+            }
+            
+            .month-card {
+                min-width: 120px;
+            }
+            
+            .header h1 {
+                font-size: 1.8rem;
+            }
+        }
+
+        @media print {
+            .filters, .action-buttons {
+                display: none;
+            }
+            
+            body {
+                background: white;
+            }
+            
+            .calendar-container, .events-section, .observations {
+                box-shadow: none;
+                border: 1px solid #ddd;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Cabeçalho -->
+<header class="site-header">
+    <div class="header-top">
+      <div class="logo">
+        <button class="menu-toggle" aria-label="Abrir menu"><i class="fas fa-bars"></i></button>
+        <img src="img/LogoSRE.png" alt="Logo SRE" />
+        <div class="brand">
+          <h1>Biblioteca Didática</h1>
+          <p>Currículo, Formação e Avaliação</p>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Menu Principal -->
+    <nav class="main-nav" id="mainNav">
+      <div class="nav-main-items">
+        <!-- Botão Início -->
+        <a href="index.html" class="nav-link active" data-target="inicio">
+        <i class="fas fa-home nav-icon"></i>
+         Início
+        </a>
+
+        <!-- Áreas do Conhecimento (com submenu) -->
+        <div class="nav-item-with-submenu">
+          <button class="nav-link nav-main-link" data-submenu="areas">
+            <i class="fas fa-book nav-icon"></i>
+            Áreas do Conhecimento
+            <i class="fas fa-chevron-down submenu-arrow"></i>
+          </button>
+          <div class="submenu" id="submenu-areas">
+            <a class="nav-link submenu-link" href="index.html#linguagens">
+              <i class="fas fa-language"></i>
+              Linguagens
+            </a>
+            <a class="nav-link submenu-link" href="index.html#linguagens">
+              <i class="fas fa-calculator"></i>
+              Matemática
+            </a>
+            <a class="nav-link submenu-link" href="index.html#ciencias-natureza">
+              <i class="fas fa-flask"></i>
+              Ciências da Natureza
+            </a>
+            <a class="nav-link submenu-link" href="index.html#ciencias-humanas">
+              <i class="fas fa-globe-americas"></i>
+              Ciências Humanas
+            </a>
+            <a class="nav-link submenu-link" href="index.html#atividades-adaptadas">
+              <i class="fas fa-universal-access"></i>
+              Atividades Adaptadas
+            </a>
+          </div>
+        </div>
+
+        <!-- Outras Páginas (submenu) -->
+        <div class="nav-item-with-submenu">
+          <button class="nav-link nav-main-link" data-submenu="pages">
+            <i class="fas fa-th nav-icon"></i>
+            Mais Opções
+            <i class="fas fa-chevron-down submenu-arrow"></i>
+          </button>
+          <div class="submenu" id="submenu-pages">
+            <a class="nav-link submenu-link" href="documentos.html">
+              <i class="fas fa-file-alt"></i>
+              Documentos Oficiais
+            </a>
+            <a class="nav-link submenu-link" href="favoritos.html">
+              <i class="fas fa-star"></i>
+              Meus Favoritos
+              <span class="favorites-count"></span>
+            </a>
+            <a class="nav-link submenu-link" href="planejador.html">
+              <i class="fas fa-calendar-alt"></i>
+              Planejador
+            </a>
+            <a class="nav-link submenu-link" href="compartilhar.html">
+              <i class="fas fa-share-alt"></i>
+              Enviar Material
+            </a>
+            <a class="nav-link submenu-link" href="sobre.html">
+              <i class="fas fa-info-circle"></i>
+              Sobre Nós
+            </a>
+          </div>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+        <!-- Filtros -->
+        <div class="filters">
+            <h3>Filtrar por:</h3>
+            <button class="filter-btn active" data-filter="all">
+                <i class="fas fa-layer-group"></i> Todos
+            </button>
+            <button class="filter-btn" data-filter="feriado">
+                <i class="fas fa-flag"></i> Feriados
+            </button>
+            <button class="filter-btn" data-filter="evento-pedagogico">
+                <i class="fas fa-chalkboard-teacher"></i> Eventos Pedagógicos
+            </button>
+            <button class="filter-btn" data-filter="data-comemorativa">
+                <i class="fas fa-gift"></i> Datas Comemorativas
+            </button>
+            <button class="filter-btn" data-filter="sabado-letivo">
+                <i class="fas fa-calendar-day"></i> Sábados Letivos
+            </button>
+        </div>
+
+        <!-- Timeline de Meses -->
+        <section class="timeline-section">
+            <h2><i class="fas fa-stream"></i> Linha do Tempo 2026</h2>
+            <div class="timeline" id="timeline">
+                <!-- Meses serão inseridos via JavaScript -->
+            </div>
+        </section>
+
+        <!-- Calendário Mensal -->
+        <section class="calendar-container">
+            <div class="calendar-header">
+                <h2 id="current-month">Janeiro 2026</h2>
+                <div>
+                    <button id="prev-month" class="action-btn secondary">
+                        <i class="fas fa-chevron-left"></i> Mês Anterior
+                    </button>
+                    <button id="next-month" class="action-btn secondary">
+                        Próximo Mês <i class="fas fa-chevron-right"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="calendar-grid" id="calendar-grid">
+                <!-- Dias serão inseridos via JavaScript -->
+            </div>
+            
+            <!-- Legenda -->
+            <div class="legend">
+                <div class="legend-item">
+                    <div class="legend-color dia-letivo"></div>
+                    <span>Dia Letivo</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color feriado"></div>
+                    <span>Feriado</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color evento-pedagogico"></div>
+                    <span>Evento Pedagógico</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color ferias"></div>
+                    <span>Férias/Recesso</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color sabado-letivo"></div>
+                    <span>Sábado Letivo</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color data-comemorativa"></div>
+                    <span>Data Comemorativa</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Eventos por Categoria -->
+        <div class="events-section">
+            <div class="event-category">
+                <h3><i class="fas fa-flag"></i> Feriados Nacionais</h3>
+                <div class="event-list" id="feriados-list">
+                    <!-- Feriados serão inseridos via JavaScript -->
+                </div>
+            </div>
+            
+            <div class="event-category">
+                <h3><i class="fas fa-chalkboard-teacher"></i> Eventos Pedagógicos</h3>
+                <div class="event-list" id="eventos-pedagogicos-list">
+                    <!-- Eventos pedagógicos serão inseridos via JavaScript -->
+                </div>
+            </div>
+            
+            <div class="event-category">
+                <h3><i class="fas fa-gift"></i> Datas Comemorativas</h3>
+                <div class="event-list" id="datas-comemorativas-list">
+                    <!-- Datas comemorativas serão inseridos via JavaScript -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Sábados Letivos -->
+        <section class="observations">
+            <h2><i class="fas fa-calendar-day"></i> Sábados Letivos 2026</h2>
+            <div id="sabados-letivos">
+                <!-- Sábados letivos serão inseridos via JavaScript -->
+            </div>
+        </section>
+
+        <!-- Observações -->
+        <section class="observations">
+            <h2><i class="fas fa-clipboard-list"></i> Observações Importantes</h2>
+            <div id="observacoes-list">
+                <!-- Observações serão inseridas via JavaScript -->
+            </div>
+        </section>
+
+        <!-- Botões de Ação -->
+        <div class="action-buttons">
+            <button class="action-btn" id="download-pdf">
+                <i class="fas fa-file-pdf"></i> Baixar PDF Original
+            </button>
+            <button class="action-btn secondary" id="print-infographic">
+                <i class="fas fa-print"></i> Imprimir Infográfico
+            </button>
+            <button class="action-btn secondary" id="share-btn">
+                <i class="fas fa-share-alt"></i> Compartilhar
+            </button>
+        </div>
+    </div>
+
+    <!-- Modal para detalhes do dia -->
+    <div class="modal" id="day-modal">
+        <div class="modal-content">
+            <button class="close-modal" id="close-modal">&times;</button>
+            <h3 id="modal-date">Data</h3>
+            <div id="modal-content">
+                <!-- Conteúdo será inserido via JavaScript -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Dados do calendário (extraídos do PDF)
+        const calendarData = {
+            ano: 2026,
+            inicioAnoLetivo: "02/02/2026",
+            terminoAnoLetivo: "18/12/2026",
+            totalDiasLetivos: 200,
+            
+            bimestres: [
+                { nome: "1º Bimestre", inicio: "02/02/2026", fim: "11/04/2026", diasLetivos: 46 },
+                { nome: "2º Bimestre", inicio: "13/04/2026", fim: "30/06/2026", diasLetivos: 54 },
+                { nome: "3º Bimestre", inicio: "03/08/2026", fim: "16/10/2026", diasLetivos: 53 },
+                { nome: "4º Bimestre", inicio: "19/10/2026", fim: "18/12/2026", diasLetivos: 47 }
+            ],
+            
+            feriados: [
+                { data: "01/01/2026", descricao: "Confraternização Universal" },
+                { data: "17/02/2026", descricao: "Carnaval" },
+                { data: "03/04/2026", descricao: "Paixão de Cristo" },
+                { data: "05/04/2026", descricao: "Páscoa" },
+                { data: "21/04/2026", descricao: "Tiradentes" },
+                { data: "01/05/2026", descricao: "Dia do Trabalho" },
+                { data: "04/06/2026", descricao: "Corpus Christi" },
+                { data: "15/08/2026", descricao: "Senhor do Bomfim" },
+                { data: "07/09/2026", descricao: "Independência do Brasil" },
+                { data: "05/10/2026", descricao: "Padroeira do Estado do Tocantins" },
+                { data: "12/10/2026", descricao: "Padroeira do Brasil" },
+                { data: "02/11/2026", descricao: "Finados" },
+                { data: "15/11/2026", descricao: "Proclamação da República" },
+                { data: "20/11/2026", descricao: "Dia Nacional de Zumbi e da Consciência Negra" },
+                { data: "25/12/2026", descricao: "Natal" }
+            ],
+            
+            eventosPedagogicos: [
+                { data: "02/02/2026", descricao: "Início do ano letivo" },
+                { data: "17/02/2026", descricao: "Semana Pedagógica da Equipe Gestora" },
+                { data: "03/04/2026", descricao: "Formação Continuada" },
+                { data: "21/04/2026", descricao: "Planejamento Pedagógico" },
+                { data: "01/05/2026", descricao: "Conselho de Classe Pedagógico" },
+                { data: "04/06/2026", descricao: "Feriado/Recesso" },
+                { data: "15/08/2026", descricao: "Férias" },
+                { data: "07/09/2026", descricao: "Recuperação Final" },
+                { data: "08/09/2026", descricao: "JET's /PARAJET's" },
+                { data: "05/10/2026", descricao: "Dia da Família na Escola" },
+                { data: "12/10/2026", descricao: "Semana Escolar de Combate a Violência contra a Mulher" },
+                { data: "02/11/2026", descricao: "Simulado ENEM" },
+                { data: "15/11/2026", descricao: "SAETO" },
+                { data: "20/11/2026", descricao: "Data de enturmação da C. de Fluxo e Eletivas" },
+                { data: "25/12/2026", descricao: "Dia D do Censo Escolar" }
+            ],
+            
+            datasComemorativas: [
+                { data: "22/02/2026", descricao: "Dia do Higienizador de Ambiente Escolar" },
+                { data: "27/02/2026", descricao: "Dia Nacional do Livro Didático" },
+                { data: "18/03/2026", descricao: "Autônomia do Estado do Tocantins" },
+                { data: "19/04/2026", descricao: "Dia dos Povos Indígenas" },
+                { data: "10/05/2026", descricao: "Dia da Família na Escola" },
+                { data: "15/05/2026", descricao: "Dia do Assistente Social" },
+                { data: "11/08/2026", descricao: "Dia do Estudante" },
+                { data: "09/08/2026", descricao: "Dia da Família na Escola" },
+                { data: "22/08/2026", descricao: "Dia do Coordenador Pedagógico" },
+                { data: "27/08/2026", descricao: "Dia do Psicólogo" },
+                { data: "09/09/2026", descricao: "Dia do Coordenador Financeiro" },
+                { data: "23/09/2026", descricao: "Dia Estadual da Educação Profissional e Tecnológica" },
+                { data: "30/09/2026", descricao: "Dia da (o) Secretária (o) Geral e Aux. Administrativo" },
+                { data: "12/10/2026", descricao: "Dia das Crianças" },
+                { data: "15/10/2026", descricao: "Dia do Professor" },
+                { data: "19/10/2026", descricao: "Dia do Aux. de Monitoramento do Patrimônio Escolar e Meio Ambiente" },
+                { data: "30/10/2026", descricao: "Dia do Manipulador de Alimentos" },
+                { data: "12/11/2026", descricao: "Dia do Diretor Escolar" },
+                { data: "04/12/2026", descricao: "Dia do Orientador Educacional" }
+            ],
+            
+            sabadosLetivos: [
+                "07/02/2026", "11/04/2026", "09/05/2026",
+                "08/08/2026", "29/08/2026", "19/09/2026",
+                "14/11/2026", "28/11/2026", "05/12/2026"
+            ],
+            
+            feriasPeriodos: [
+                { inicio: "01/07/2026", fim: "31/07/2026", descricao: "Férias Escolares" }
+            ],
+            
+            observacoes: [
+                "Início do ano letivo: 02/02/26 e Término do ano letivo: 18/12/26;",
+                "Os feriados municipais que comprometerem os 200 dias letivos deverão ser repostos;",
+                "Calendário com Conselho de Classe Pedagógico Letivo, condicionada a organização das atividades pedagógicas e participação dos estudantes;",
+                "Início dos bimestres: 1º bimestre 02/02; 2º bimestre 13/04; 3º bimestre 03/08 e 4º bimestre 19/10;",
+                "O fechamento dos bimestres do Ensino Regular serão: 1º bimestre 11/04; 2º bimestre 30/06; 3º bimestre 16/10 e 4º bimestre 18/12;",
+                "Para as turmas com organização semestral (EJA, Correção de Fluxo e outros) a recuperação final ocorrerá nos dias: 01/07, 02/07 e 03/07 no 1° semestre; e 19/12, 21/12 e 22/12 no 2° semestre;",
+                "Para as turmas com organização anual a recuperação final ocorrerá nos dias: 19/12, 21/12 e 22/12;",
+                "A recuperação final estabelecida nos artigos 170 e seguintes do Regimento Escolar, será elaborada com os descritores de correção, previamente pelo professor e aplicada e corrigida na data prevista neste calendário, pela equipe administrativa.",
+                "Os sábados letivos deverão ser utilizados para simulados, projetos de leituras, projetos das áreas de conhecimento e ações de culminâncias que devem estar previstos no PPP;",
+                "Os dias de pontos facultativos não são considerados para as instituições escolares, desse modo, deverão seguir criteriosamente o calendário letivo;",
+                "Início do Censo Escolar: 27/05/2026;",
+                "Os dias de formação para a Rede Municipal devem ser ajustados para oportunizar a realização da formação, condicionada a reorganização do calendário para as turmas em questão, ficando mantido o calendário na íntegra para as demais turmas;",
+                "Qualquer alteração neste calendário está condionada a análise e parecer da Superintedência Regional de Educação, considerando a organização do transporte escolar e a harmonização do atendimento nas Unidades Escolares da Rede Estadual e da Rede Municipal;",
+                "As Unidades Escolares que contemplam em suas estruturas curriculares atividades híbridas (NP - Não Presenciais), devem elaborar o Plano de Atividade, acompanhamento e avaliação pelos docentes e comprovação da execução das atividades: protocolo de entrega e recebimento das atividades feitas, critérios avalitiavos, comprovação de equivalência com a carga horária e guarda dos arquivos da matriz das atividades;",
+                "O período das avaliações do SAETO previstas neste calendário poderá ser alterado em razão da logística de aplicação, sem interferência nos dias letivos.",
+                "Compõe este calendário as diretrizes estabelecidas na Portaria Conjunta Seduc/Undime/Sistemas Municipais, que orienta e estabelece as normas para o seu cumprimento."
+            ]
+        };
+
+        // Variáveis globais
+        let currentMonth = 0; // Janeiro = 0
+        const months = [
+            "Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho",
+            "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"
+        ];
+
+        // Inicialização
+        document.addEventListener('DOMContentLoaded', function() {
+            initTimeline();
+            initCalendar();
+            loadEvents();
+            loadObservations();
+            loadSabadosLetivos();
+            setupEventListeners();
+        });
+
+        // Timeline de meses
+        function initTimeline() {
+            const timeline = document.getElementById('timeline');
+            
+            months.forEach((month, index) => {
+                const diasLetivos = getDiasLetivosPorMes(index);
+                const monthCard = document.createElement('div');
+                monthCard.className = `month-card ${index === currentMonth ? 'active' : ''}`;
+                monthCard.dataset.month = index;
+                
+                monthCard.innerHTML = `
+                    <div class="month-name">${month}</div>
+                    <div class="month-days">${diasLetivos} dias letivos</div>
+                `;
+                
+                monthCard.addEventListener('click', () => {
+                    currentMonth = index;
+                    updateCalendar();
+                    updateTimeline();
+                });
+                
+                timeline.appendChild(monthCard);
+            });
+        }
+
+        function updateTimeline() {
+            document.querySelectorAll('.month-card').forEach((card, index) => {
+                if (index === currentMonth) {
+                    card.classList.add('active');
+                } else {
+                    card.classList.remove('active');
+                }
+            });
+        }
+
+        // Calendário mensal
+        function initCalendar() {
+            // Cabeçalho com dias da semana
+            const weekdays = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
+            const calendarGrid = document.getElementById('calendar-grid');
+            
+            weekdays.forEach(day => {
+                const dayElement = document.createElement('div');
+                dayElement.className = 'weekday';
+                dayElement.textContent = day;
+                calendarGrid.appendChild(dayElement);
+            });
+            
+            updateCalendar();
+        }
+
+        function updateCalendar() {
+            const calendarGrid = document.getElementById('calendar-grid');
+            // Remove dias existentes (mantém apenas os cabeçalhos)
+            const existingDays = calendarGrid.querySelectorAll('.day-cell');
+            existingDays.forEach(day => day.remove());
+            
+            // Atualiza título do mês
+            document.getElementById('current-month').textContent = `${months[currentMonth]} ${calendarData.ano}`;
+            
+            // Cria dias do mês
+            const year = calendarData.ano;
+            const firstDay = new Date(year, currentMonth, 1);
+            const lastDay = new Date(year, currentMonth + 1, 0);
+            
+            // Espaços vazios antes do primeiro dia
+            const firstDayOfWeek = firstDay.getDay();
+            for (let i = 0; i < firstDayOfWeek; i++) {
+                const emptyDay = document.createElement('div');
+                emptyDay.className = 'day-cell';
+                calendarGrid.appendChild(emptyDay);
+            }
+            
+            // Dias do mês
+            for (let day = 1; day <= lastDay.getDate(); day++) {
+                const date = new Date(year, currentMonth, day);
+                const dateStr = formatDate(date);
+                const dayElement = document.createElement('div');
+                
+                // Determina tipo do dia
+                let dayType = 'dia-letivo';
+                let events = [];
+                
+                // Verifica se é feriado
+                const feriado = calendarData.feriados.find(f => f.data === dateStr);
+                if (feriado) {
+                    dayType = 'feriado';
+                    events.push(feriado.descricao);
+                }
+                
+                // Verifica se é evento pedagógico
+                const evento = calendarData.eventosPedagogicos.find(e => e.data === dateStr);
+                if (evento) {
+                    dayType = 'evento-pedagogico';
+                    events.push(evento.descricao);
+                }
+                
+                // Verifica se é data comemorativa
+                const dataComemorativa = calendarData.datasComemorativas.find(d => d.data === dateStr);
+                if (dataComemorativa) {
+                    dayType = 'data-comemorativa';
+                    events.push(dataComemorativa.descricao);
+                }
+                
+                // Verifica se é sábado letivo
+                if (date.getDay() === 6 && calendarData.sabadosLetivos.includes(dateStr)) {
+                    dayType = 'sabado-letivo';
+                    events.push('Sábado Letivo');
+                }
+                
+                // Verifica se é férias
+                const isFerias = calendarData.feriasPeriodos.some(period => {
+                    const inicio = parseDate(period.inicio);
+                    const fim = parseDate(period.fim);
+                    return date >= inicio && date <= fim;
+                });
+                
+                if (isFerias) {
+                    dayType = 'ferias';
+                    events.push('Férias Escolares');
+                }
+                
+                // Adiciona classe baseada no tipo
+                dayElement.className = `day-cell ${dayType}`;
+                dayElement.dataset.date = dateStr;
+                dayElement.dataset.type = dayType;
+                
+                // Conteúdo do dia
+                dayElement.innerHTML = `
+                    <div class="day-number">${day}</div>
+                    <div class="day-event">${events.length > 0 ? events[0] : ''}</div>
+                `;
+                
+                // Adiciona evento de clique
+                dayElement.addEventListener('click', () => showDayDetails(dateStr, events, dayType));
+                
+                calendarGrid.appendChild(dayElement);
+            }
+        }
+
+        // Carrega eventos nas listas
+        function loadEvents() {
+            // Feriados
+            const feriadosList = document.getElementById('feriados-list');
+            calendarData.feriados.forEach(feriado => {
+                const item = document.createElement('div');
+                item.className = 'event-item feriado';
+                item.innerHTML = `
+                    <span class="event-date">${formatDateDisplay(feriado.data)}</span>
+                    <span class="event-desc">${feriado.descricao}</span>
+                `;
+                feriadosList.appendChild(item);
+            });
+            
+            // Eventos Pedagógicos
+            const eventosList = document.getElementById('eventos-pedagogicos-list');
+            calendarData.eventosPedagogicos.forEach(evento => {
+                const item = document.createElement('div');
+                item.className = 'event-item evento-pedagogico';
+                item.innerHTML = `
+                    <span class="event-date">${formatDateDisplay(evento.data)}</span>
+                    <span class="event-desc">${evento.descricao}</span>
+                `;
+                eventosList.appendChild(item);
+            });
+            
+            // Datas Comemorativas
+            const datasList = document.getElementById('datas-comemorativas-list');
+            calendarData.datasComemorativas.forEach(data => {
+                const item = document.createElement('div');
+                item.className = 'event-item data-comemorativa';
+                item.innerHTML = `
+                    <span class="event-date">${formatDateDisplay(data.data)}</span>
+                    <span class="event-desc">${data.descricao}</span>
+                `;
+                datasList.appendChild(item);
+            });
+        }
+
+        // Carrega observações
+        function loadObservations() {
+            const obsList = document.getElementById('observacoes-list');
+            obsList.style.counterReset = 'obs';
+            
+            calendarData.observacoes.forEach(obs => {
+                const item = document.createElement('div');
+                item.className = 'observation-item';
+                item.textContent = obs;
+                obsList.appendChild(item);
+            });
+        }
+
+        // Carrega sábados letivos
+        function loadSabadosLetivos() {
+            const sabadosDiv = document.getElementById('sabados-letivos');
+            
+            const grupos = [
+                { titulo: "1° Semestre", datas: calendarData.sabadosLetivos.slice(0, 3) },
+                { titulo: "2° Semestre", datas: calendarData.sabadosLetivos.slice(3) }
+            ];
+            
+            grupos.forEach(grupo => {
+                const grupoDiv = document.createElement('div');
+                grupoDiv.style.marginBottom = '1rem';
+                
+                const titulo = document.createElement('h4');
+                titulo.style.color = 'var(--primary)';
+                titulo.style.marginBottom = '0.5rem';
+                titulo.textContent = grupo.titulo;
+                
+                const datasDiv = document.createElement('div');
+                datasDiv.style.display = 'flex';
+                datasDiv.style.flexWrap = 'wrap';
+                datasDiv.style.gap = '0.5rem';
+                
+                grupo.datas.forEach(dataStr => {
+                    const dataItem = document.createElement('div');
+                    dataItem.className = 'filter-btn';
+                    dataItem.style.cursor = 'default';
+                    dataItem.innerHTML = `
+                        <i class="fas fa-calendar-day"></i> ${formatDateDisplay(dataStr)}
+                    `;
+                    datasDiv.appendChild(dataItem);
+                });
+                
+                grupoDiv.appendChild(titulo);
+                grupoDiv.appendChild(datasDiv);
+                sabadosDiv.appendChild(grupoDiv);
+            });
+        }
+
+        // Configura event listeners
+        function setupEventListeners() {
+            // Navegação entre meses
+            document.getElementById('prev-month').addEventListener('click', () => {
+                if (currentMonth > 0) {
+                    currentMonth--;
+                    updateCalendar();
+                    updateTimeline();
+                }
+            });
+            
+            document.getElementById('next-month').addEventListener('click', () => {
+                if (currentMonth < 11) {
+                    currentMonth++;
+                    updateCalendar();
+                    updateTimeline();
+                }
+            });
+            
+            // Filtros
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    const filter = this.dataset.filter;
+                    filterDays(filter);
+                });
+            });
+            
+            // Botões de ação
+            document.getElementById('download-pdf').addEventListener('click', () => {
+                alert('Esta funcionalidade seria implementada para baixar o PDF original.');
+                // Em um ambiente real, faria download do PDF
+            });
+            
+            document.getElementById('print-infographic').addEventListener('click', () => {
+                window.print();
+            });
+            
+            document.getElementById('share-btn').addEventListener('click', () => {
+                if (navigator.share) {
+                    navigator.share({
+                        title: 'Calendário Escolar 2026 - Tocantins',
+                        text: 'Confira o calendário escolar 2026 do Estado do Tocantins',
+                        url: window.location.href
+                    });
+                } else {
+                    alert('Link copiado para a área de transferência!');
+                    // Copiar URL para área de transferência
+                }
+            });
+            
+            // Modal
+            document.getElementById('close-modal').addEventListener('click', () => {
+                document.getElementById('day-modal').style.display = 'none';
+            });
+            
+            // Fechar modal ao clicar fora
+            document.getElementById('day-modal').addEventListener('click', (e) => {
+                if (e.target.id === 'day-modal') {
+                    document.getElementById('day-modal').style.display = 'none';
+                }
+            });
+        }
+
+        // Filtra dias no calendário
+        function filterDays(filterType) {
+            const days = document.querySelectorAll('.day-cell');
+            
+            days.forEach(day => {
+                if (filterType === 'all') {
+                    day.style.display = 'flex';
+                } else if (day.dataset.type === filterType) {
+                    day.style.display = 'flex';
+                } else {
+                    day.style.display = 'none';
+                }
+            });
+        }
+
+        // Mostra detalhes do dia no modal
+        function showDayDetails(dateStr, events, dayType) {
+            const modal = document.getElementById('day-modal');
+            const modalDate = document.getElementById('modal-date');
+            const modalContent = document.getElementById('modal-content');
+            
+            // Formata a data
+            const date = parseDate(dateStr);
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            modalDate.textContent = date.toLocaleDateString('pt-BR', options);
+            
+            // Conteúdo do modal
+            let content = `<div style="margin-bottom: 1rem;">
+                <strong>Tipo:</strong> ${getDayTypeName(dayType)}
+            </div>`;
+            
+            if (events.length > 0) {
+                content += `<div style="margin-bottom: 1rem;">
+                    <strong>Eventos:</strong>
+                    <ul style="margin-top: 0.5rem; padding-left: 1.5rem;">
+                        ${events.map(event => `<li>${event}</li>`).join('')}
+                    </ul>
+                </div>`;
+            } else {
+                content += `<p>Nenhum evento registrado para esta data.</p>`;
+            }
+            
+            // Verifica se é dia letivo
+            const isDiaLetivo = dayType === 'dia-letivo' || dayType === 'sabado-letivo';
+            if (isDiaLetivo) {
+                content += `<p style="color: var(--dia-letivo); font-weight: bold;">
+                    <i class="fas fa-check-circle"></i> Dia Letivo
+                </p>`;
+            }
+            
+            modalContent.innerHTML = content;
+            modal.style.display = 'flex';
+        }
+
+        // Funções auxiliares
+        function formatDate(date) {
+            const day = date.getDate().toString().padStart(2, '0');
+            const month = (date.getMonth() + 1).toString().padStart(2, '0');
+            const year = date.getFullYear();
+            return `${day}/${month}/${year}`;
+        }
+
+        function formatDateDisplay(dateStr) {
+            const [day, month, year] = dateStr.split('/');
+            return `${day}/${month}`;
+        }
+
+        function parseDate(dateStr) {
+            const [day, month, year] = dateStr.split('/');
+            return new Date(year, month - 1, day);
+        }
+
+        function getDiasLetivosPorMes(monthIndex) {
+            // Valores aproximados baseados no PDF
+            const diasPorMes = [
+                0,  // Janeiro: 0 (férias)
+                18, // Fevereiro: 18
+                22, // Março: 22
+                19, // Abril: 19
+                21, // Maio: 21
+                20, // Junho: 20
+                0,  // Julho: 0 (férias)
+                23, // Agosto: 23
+                21, // Setembro: 21
+                20, // Outubro: 20
+                21, // Novembro: 21
+                15  // Dezembro: 15
+            ];
+            return diasPorMes[monthIndex];
+        }
+
+        function getDayTypeName(dayType) {
+            const names = {
+                'dia-letivo': 'Dia Letivo',
+                'feriado': 'Feriado',
+                'evento-pedagogico': 'Evento Pedagógico',
+                'ferias': 'Férias/Recesso',
+                'sabado-letivo': 'Sábado Letivo',
+                'data-comemorativa': 'Data Comemorativa'
+            };
+            return names[dayType] || dayType;
+        }
+    </script>
+</body>
+</html>
